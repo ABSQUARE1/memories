@@ -18,8 +18,8 @@ jobs:
         run: npm install
 
       - name: Build the app
-        run: npm run build
-        working-directory: ./client/package.json
+        run: npm run start
+        working-directory: ./client
        # Share artifact inside workflow
       - name: Share artifact inside workflow
         uses: actions/upload-artifact@v1
