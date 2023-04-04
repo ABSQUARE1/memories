@@ -4,9 +4,8 @@ on:
     branches: ["main"]
 
 jobs:
-  build-app:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v2
 
@@ -18,10 +17,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install react-script
-        run: npm install react-script
-
       - name: Build the app
         run: npm run build
-        working-directory: ./client
-
+        working-directory: ./client/package.json
+       # Share artifact inside workflow
+      - name: Share artifact inside workflow
+        uses: actions/upload-artifact@v1
+        with:
+          name: react-github-actions-build
+          path: build
