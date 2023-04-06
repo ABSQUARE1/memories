@@ -44,6 +44,12 @@ echo "
 echo "
 ----------------------
   PM2
+
+  pm2 start app.js --env production
+  pm2 status
+  pm2 save
+  pm2 startup 
+  pm2 stop all
 ----------------------
 "
 
