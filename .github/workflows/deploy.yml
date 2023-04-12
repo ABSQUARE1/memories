@@ -22,18 +22,5 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '12.x'
-          
-      - name: SSH into EC2
-      - uses: appleboy/ssh-action@master
-        with:
-          host: ${{env.SERVER_PUBLIC_IP}}
-          username: ubuntu
-          key: ${{env.AWS_SSH_KEY_PRIVATE}}
-          envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SSH_KEY_PRIVATE, AWS_REGION
-          script: |-
-            cd memories
-            git pull
-            cd client
-            npm run build
-            sudo cp build /var/www -r
-            sudo systemctl restart nginx
+
+      
