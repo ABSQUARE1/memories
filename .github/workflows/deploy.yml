@@ -1,27 +1,32 @@
-name: Memories App Build
+name: Memories App Build & Deploy
 on:
   push:
     branches: ["main"]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
       - uses: actions/checkout@v2
-
-      - name: Use Node.js 12.x
-        uses: actions/setup-node@v2
+      - name: SSH into EC2
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}   
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_SSH_KEY_PRIVATE: ${{secrets.AWS_SSH_KEY_PRIVATE}} 
+          AWS_SSH_KEY_PUBLIC: ${{secrets.AWS_SSH_KEY_PUBLIC}}
+          SERVER_PUBLIC_IP: ${{secrets.SERVER_PUBLIC_IP}}
+          AWS_REGION: us-east-1
+        uses: appleboy/ssh-action@master
         with:
-          node-version: '12.x'
-
-      - name: Install dependencies
-        run: cd client && npm install
-
-      - name: Build the app
-        run: cd client && npm build
-   
-      - name: Share artifact inside workflow
-        uses: actions/upload-artifact@v2
-        with:
-          name: react-github-actions-build
-          path: client/build
+          host: ${{env.SERVER_PUBLIC_IP}}
+          username: ubuntu
+          key: ${{env.AWS_SSH_KEY_PRIVATE}}
+          envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SSH_KEY_PRIVATE, AWS_REGION
+          script: |-
+            cd memories
+            git pull
+            cd client
+            npm run build
+            sudo cp build /var/www -r
+            sudo systemctl restart nginx
