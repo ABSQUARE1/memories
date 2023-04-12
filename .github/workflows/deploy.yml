@@ -3,6 +3,14 @@ on:
   push:
     branches: ["main"]
 
+env:
+  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}   
+  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  AWS_SSH_KEY_PRIVATE: ${{secrets.AWS_SSH_KEY_PRIVATE}} 
+  AWS_SSH_KEY_PUBLIC: ${{secrets.AWS_SSH_KEY_PUBLIC}}
+  SERVER_PUBLIC_IP: ${{secrets.SERVER_PUBLIC_IP}}
+  AWS_REGION: us-east-1
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -10,14 +18,7 @@ jobs:
       - name: Checkout
       - uses: actions/checkout@v2
       - name: SSH into EC2
-        env:
-          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}   
-          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          AWS_SSH_KEY_PRIVATE: ${{secrets.AWS_SSH_KEY_PRIVATE}} 
-          AWS_SSH_KEY_PUBLIC: ${{secrets.AWS_SSH_KEY_PUBLIC}}
-          SERVER_PUBLIC_IP: ${{secrets.SERVER_PUBLIC_IP}}
-          AWS_REGION: us-east-1
-        uses: appleboy/ssh-action@master
+      - uses: appleboy/ssh-action@master
         with:
           host: ${{env.SERVER_PUBLIC_IP}}
           username: ubuntu
